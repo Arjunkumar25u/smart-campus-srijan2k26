@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Campus | Srijan 2K26</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f6fc;color:#192440}
+header{background:#fff;padding:18px 6%;display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:0 2px 12px #00000008}
+.logo{font-size:23px;font-weight:bold;color:#4263eb}
+.logo small{display:block;font-size:11px;color:#777;margin-top:5px}
+main{max-width:1100px;margin:35px auto;padding:0 18px}
+.layout{display:grid;grid-template-columns:1fr 400px;gap:35px;align-items:center;min-height:70vh}
+.hero h1{font-size:45px;line-height:1.15}
+.hero h1 span{color:#4263eb}
+.hero p{color:#737d94;line-height:1.8}
+.features{line-height:2.5;font-weight:bold}
+.card,.panel,.stat{background:#fff;border:1px solid #e5eaf3;border-radius:16px;padding:23px;box-shadow:0 8px 25px #26345a0a}
+.tabs{display:flex;gap:7px;margin-bottom:22px}
+.tabs button{flex:1;padding:11px 5px;border:0;border-radius:9px;background:#edf0f8;cursor:pointer}
+.tabs button.active{background:#4263eb;color:white}
+h2{margin-top:0}
+form{display:grid;gap:13px;margin-top:18px}
+label{font-size:13px;font-weight:bold;display:grid;gap:7px}
+input,select{width:100%;padding:12px;border:1px solid #dce2ed;border-radius:9px;font-size:14px;background:white}
+.btn{border:0;background:#4263eb;color:white;padding:12px;border-radius:9px;font-weight:bold;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:wait}
+.secondary{background:white;color:#192440;border:1px solid #dce2ed}
+.hidden{display:none!important}
+.muted{font-size:13px;color:#778098;line-height:1.6}
+.message{font-size:13px;color:#16865a;line-height:1.6;overflow-wrap:anywhere}
+.error{color:#bd3447!important}
+.small{font-size:11px;color:#8991a4;line-height:1.6}
+.welcome,.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.welcome h1{font-size:32px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}
+.stat strong{display:block;font-size:28px;margin:10px 0}
+.stat span,.stat small{font-size:12px;color:#778098}
+.panel{margin:18px 0}
+.checkin{display:flex;align-items:end;gap:12px}
+.checkin label{flex:1}
+.admin-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.table-wrap{overflow-x:auto;margin-top:15px}
+table{width:100%;border-collapse:collapse;white-space:nowrap}
+th,td{padding:12px 9px;text-align:left;border-bottom:1px solid #edf0f6;font-size:12px}
+th{background:#f7f8fc;color:#778098}
+footer{text-align:center;padding:25px;color:#9299aa;font-size:12px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.hero h1{font-size:38px}.card{max-width:500px;width:100%;margin:auto}}
+@media(max-width:520px){header{padding:14px 4%}.logo{font-size:19px}.stats{grid-template-columns:1fr}.checkin{display:grid}.welcome h1{font-size:25px}.card,.panel{padding:16px}.admin-form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">◈ Smart Campus
+    <small>Srijan 2K26 | Attendance System</small>
+  </div>
+  <span id="userBadge" class="muted hidden"></span>
+</header>
+
+<main>
+<section id="authView" class="layout">
+  <div class="hero">
+    <p style="color:#4263eb;font-weight:bold;letter-spacing:2px">SMART CAMPUS SOLUTION</p>
+    <h1>Attendance that<br><span>thinks smarter.</span></h1>
+    <p>Smart classroom attendance using RFID-ready technology. Manage students, track attendance and view records in one place.</p>
+    <div class="features">
+      ✓ Student and Admin Login<br>
+      ✓ Student and Admin Signup<br>
+      ✓ RFID Attendance Demo<br>
+      ✓ Firebase Database
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button type="button" class="active" data-mode="login">Login</button>
+      <button type="button" data-mode="signup">Sign Up</button>
+    </div>
+
+    <h2 id="authTitle">Welcome Back!</h2>
+    <p id="authSubtitle" class="muted">Login to your account.</p>
+
+    <form id="authForm">
+      <label id="nameWrap" class="hidden">Full Name
+        <input id="name" placeholder="Enter your name">
+      </label>
+
+      <label>Email Address
+        <input id="email" type="email" required placeholder="you@college.edu">
+      </label>
+
+      <label>Password
+        <input id="password" type="password" minlength="6" required placeholder="Minimum 6 characters">
+      </label>
+
+      <label>Account Type
+        <select id="role">
+          <option value="student">Student</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+
+      <label id="rollWrap" class="hidden">Roll Number
+        <input id="roll" placeholder="SC2026-001">
+      </label>
+
+      <label id="rfidWrap" class="hidden">RFID Card UID
+        <input id="rfid" placeholder="A1B2C3D4">
+      </label>
+
+      <button id="authSubmit" class="btn" type="submit">Login</button>
+    </form>
+
+    <p class="small">Admin signup creates an Authentication account. The project owner must authorize the admin role in Firestore before admin access is granted.</p>
+    <p id="authMessage" class="message" role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<section id="dashboard" class="hidden">
+  <div class="welcome">
+    <div>
+      <p style="color:#4263eb;font-weight:bold">DASHBOARD</p>
+      <h1 id="welcomeTitle">Welcome!</h1>
+      <p id="welcomeText" class="muted"></p>
+    </div>
+    <button id="logoutBtn" type="button" class="btn secondary">Logout</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span>Total Attendance Records</span><strong id="totalRecords">0</strong><small>Records visible to your account</small></div>
+    <div class="stat"><span>Present Today</span><strong id="presentToday">0</strong><small>Today's check-ins</small></div>
+    <div class="stat"><span>Attendance Rate</span><strong id="attendanceRate">—</strong><small>Demo indicator</small></div>
+  </div>
+
+  <div id="studentPanel" class="panel hidden">
+    <h2>RFID Check-in</h2>
+    <p class="muted">Enter your registered UID to simulate scanning your card.</p>
+    <form id="attendanceForm" class="checkin">
+      <label>RFID Card UID
+        <input id="scanUid" required placeholder="Enter RFID UID">
+      </label>
+      <button class="btn" type="submit">Mark Attendance</button>
+    </form>
+    <p id="attendanceMessage" class="message" role="status"></p>
+  </div>
+
+  <div id="adminPanel" class="panel hidden">
+    <h2>Admin Console</h2>
+    <p class="muted">Add a student directory entry. This does not create a student's login account.</p>
+    <form id="studentForm" class="admin-form">
+      <label>Student Name<input id="studentName" required></label>
+      <label>Student Email<input id="studentEmail" type="email" required></label>
+      <label>Roll Number<input id="studentRoll" required></label>
+      <label>RFID UID<input id="studentRfid" required></label>
+      <button class="btn" type="submit">Add Student</button>
+    </form>
+    <p id="adminMessage" class="message" role="status"></p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div><h2 id="recordsTitle">Attendance History</h2><p class="muted">Recent attendance records.</p></div>
+      <button id="refreshBtn" class="btn secondary" type="button">Refresh</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Student</th><th>Roll Number</th><th>Date &amp; Time</th><th>Status</th><th>Method</th></tr></thead>
+        <tbody id="recordsBody"><tr><td colspan="5">No records yet.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <p id="dashboardMessage" class="message" role="status"></p>
+</section>
+</main>
+
+<footer>Smart Campus Solution | Srijan 2K26 Hackathon</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBmyqO4IW87heBDZnb1MfHwuHX2gf59d6M",
+  authDomain: "smartcampussrijan.firebaseapp.com",
+  projectId: "smartcampussrijan",
+  storageBucket: "smartcampussrijan.firebasestorage.app",
+  messagingSenderId: "645306801214",
+  appId: "1:645306801214:web:72a61a0ae3424680b9856f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+
+let mode = "login";
+let currentUser = null;
+let currentProfile = null;
+let busy = false;
+
+function showMessage(id, text, error = false) {
+  $(id).textContent = text || "";
+  $(id).classList.toggle("error", Boolean(error));
+}
+
+function normalizeUID(value) {
+  return String(value || "").trim().replace(/\s+/g, "").toUpperCase();
+}
+
+function errorText(error) {
+  const errors = {
+    "auth/email-already-in-use": "Email already registered. Please login.",
+    "auth/invalid-credential": "Incorrect email or password.",
+    "auth/invalid-email": "Enter a valid email address.",
+    "auth/weak-password": "Password must contain at least 6 characters.",
+    "auth/operation-not-allowed": "Enable Email/Password in Firebase Authentication.",
+    "auth/network-request-failed": "Network error. Check your internet.",
+    "auth/too-many-requests": "Too many attempts. Please try again later.",
+    "permission-denied": "Firestore permission denied. Check your Firestore Rules."
+  };
+  return errors[error.code] || error.message || "An error occurred.";
+}
+
+function updateForm() {
+  const signup = mode === "signup";
+  const student = $("role").value === "student";
+
+  $("nameWrap").classList.toggle("hidden", !signup);
+  $("rollWrap").classList.toggle("hidden", !signup || !student);
+  $("rfidWrap").classList.toggle("hidden", !signup || !student);
+
+  $("name").required = signup;
+  $("roll").required = signup && student;
+  $("rfid").required = signup && student;
+
+  $("authTitle").textContent = signup ? "Create Account" : "Welcome Back!";
+  $("authSubtitle").textContent = signup
+    ? "Register your account."
+    : "Choose your account type and login.";
+
+  $("authSubmit").textContent = busy
+    ? "Please wait..."
+    : signup ? "Create Account" : "Login";
+}
+
+document.querySelectorAll("[data-mode]").forEach(button => {
+  button.addEventListener("click", () => {
+    if (busy) return;
+    mode = button.dataset.mode;
+    document.querySelectorAll("[data-mode]").forEach(b =>
+      b.classList.toggle("active", b === button)
+    );
+    showMessage("authMessage", "");
+    updateForm();
+  });
+});
+
+$("role").addEventListener("change", updateForm);
+updateForm();
+
+$("authForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (busy) return;
+
+  busy = true;
+  $("authSubmit").disabled = true;
+  updateForm();
+  showMessage("authMessage", mode === "signup" ? "Creating account..." : "Signing in...");
+
+  const email = $("email").value.trim().toLowerCase();
+  const password = $("password").value;
+  const role = $("role").value;
+
+  try {
+    if (mode === "signup") {
+      const name = $("name").value.trim();
+      const rollNo = $("roll").value.trim();
+      const rfidUid = normalizeUID($("rfid").value);
+
+      if (!name) throw new Error("Enter your full name.");
+      if (role === "student" && (!rollNo || !rfidUid)) {
+        throw new Error("Enter your roll number and RFID UID.");
+      }
+
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+
+      if (role === "student") {
+        try {
+          await setDoc(doc(db, "users", credential.user.uid), {
+            uid: credential.user.uid,
+            name,
+            email,
+            role: "student",
+            rollNo,
+            rfidUid,
+            createdAt: serverTimestamp()
+          });
+
+          showMessage("authMessage", "Student account created successfully.");
+        } catch (profileError) {
+          await signOut(auth).catch(() => {});
+          throw new Error(
+            "Account created but profile saving failed. " +
+            errorText(profileError) +
+            " Check Firestore Rules."
+          );
+        }
+      } else {
+        // Admin Auth account is created, but no admin privileges are granted here.
+        const newUid = credential.user.uid;
+        await signOut(auth);
+
+        showMessage(
+          "authMessage",
+          "Admin Auth account created. UID: " + newUid +
+          ". Project owner must create users/" + newUid +
+          " in Firestore with role=admin before this account can access the admin dashboard."
+        );
+      }
+    } else {
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      const profileSnap = await getDoc(doc(db, "users", credential.user.uid));
+
+      if (!profileSnap.exists()) {
+        await signOut(auth).catch(() => {});
+        throw new Error(
+          "Profile not found. Admin signup may still need authorization in Firestore."
+        );
+      }
+
+      const profile = profileSnap.data();
+
+      if (!["student", "admin"].includes(profile.role)) {
+        await signOut(auth).catch(() => {});
+        throw new Error("Invalid role. Contact the project admin.");
+      }
+
+      if (profile.role !== role) {
+        await signOut(auth).catch(() => {});
+        throw new Error("Choose the correct account type for this email.");
+      }
+    }
+  } catch (error) {
+    showMessage("authMessage", errorText(error), true);
+  } finally {
+    busy = false;
+    $("authSubmit").disabled = false;
+    updateForm();
+  }
+});
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+
+  if (!user) {
+    currentProfile = null;
+    $("authView").classList.remove("hidden");
+    $("dashboard").classList.add("hidden");
+    $("userBadge").classList.add("hidden");
+    return;
+  }
+
+  try {
+    const profileSnap = await getDoc(doc(db, "users", user.uid));
+
+    if (!profileSnap.exists()) {
+      await signOut(auth);
+      showMessage(
+        "authMessage",
+        "Campus profile missing. For admin accounts, the project owner must authorize the UID in Firestore.",
+        true
+      );
+      return;
+    }
+
+    currentProfile = profileSnap.data();
+
+    if (!["student", "admin"].includes(currentProfile.role)) {
+      await signOut(auth);
+      showMessage("authMessage", "Invalid role in profile.", true);
+      return;
+    }
+
+    $("authView").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+    $("userBadge").classList.remove("hidden");
+
+    $("userBadge").textContent =
+      (currentProfile.name || currentProfile.email || "User") +
+      " • " + currentProfile.role;
+
+    $("welcomeTitle").textContent =
+      "Hello, " + (currentProfile.name || "User") + "!";
+
+    $("welcomeText").textContent = currentProfile.role === "admin"
+      ? "Manage campus attendance and students."
+      : "Your attendance activity is shown below.";
+
+    $("studentPanel").classList.toggle("hidden", currentProfile.role !== "student");
+    $("adminPanel").classList.toggle("hidden", currentProfile.role !== "admin");
+
+    $("recordsTitle").textContent = currentProfile.role === "admin"
+      ? "Campus Attendance Records"
+      : "My Attendance History";
+
+    if (currentProfile.role === "student") {
+      $("scanUid").value = currentProfile.rfidUid || "";
+    }
+
+    await loadRecords();
+  } catch (error) {
+    showMessage("dashboardMessage", errorText(error), true);
+  }
+});
+
+$("logoutBtn").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    showMessage("dashboardMessage", errorText(error), true);
+  }
+});
+
+$("refreshBtn").addEventListener("click", loadRecords);
+
+$("attendanceForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!currentUser || currentProfile?.role !== "student") return;
+
+  const enteredUID = normalizeUID($("scanUid").value);
+  const registeredUID = normalizeUID(currentProfile.rfidUid);
+
+  if (!enteredUID || enteredUID !== registeredUID) {
+    showMessage("attendanceMessage", "RFID UID does not match your registered card.", true);
+    return;
+  }
+
+  const now = new Date();
+  const dateKey = now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, "0") + "-" +
+    String(now.getDate()).padStart(2, "0");
+
+  const attendanceRef = doc(
+    db, "attendance", currentUser.uid + "_" + dateKey
+  );
+
+  const button = $("attendanceForm").querySelector("button");
+  button.disabled = true;
+
+  try {
+    const existing = await getDoc(attendanceRef);
+
+    if (existing.exists()) {
+      showMessage("attendanceMessage", "Attendance already marked today.");
+      return;
+    }
+
+    await setDoc(attendanceRef, {
+      studentUid: currentUser.uid,
+      studentName: currentProfile.name || "",
+      email: currentProfile.email || currentUser.email || "",
+      rollNo: currentProfile.rollNo || "",
+      rfidUid: enteredUID,
+      dateKey,
+      status: "Present",
+      method: "RFID Demo",
+      timestamp: serverTimestamp()
+    });
+
+    showMessage("attendanceMessage", "Attendance marked successfully!");
+    await loadRecords();
+  } catch (error) {
+    showMessage("attendanceMessage", errorText(error), true);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("studentForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!currentUser || currentProfile?.role !== "admin") return;
+
+  const button = $("studentForm").querySelector("button");
+  button.disabled = true;
+
+  try {
+    const rollNo = $("studentRoll").value.trim();
+    const studentRef = doc(db, "students", rollNo);
+    const existing = await getDoc(studentRef);
+
+    if (existing.exists()) {
+      showMessage("adminMessage", "This roll number already exists.", true);
+      return;
+    }
+
+    await setDoc(studentRef, {
+      name: $("studentName").value.trim(),
+      email: $("studentEmail").value.trim().toLowerCase(),
+      rollNo,
+      rfidUid: normalizeUID($("studentRfid").value),
+      createdBy: currentUser.uid,
+      createdAt: serverTimestamp()
+    });
+
+    showMessage("adminMessage", "Student directory entry added successfully.");
+    $("studentForm").reset();
+  } catch (error) {
+    showMessage("adminMessage", errorText(error), true);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+async function loadRecords() {
+  if (!currentUser || !currentProfile) return;
+
+  const body = $("recordsBody");
+  body.innerHTML = "<tr><td colspan='5'>Loading...</td></tr>";
+
+  try {
+    const recordsQuery = currentProfile.role === "admin"
+      ? query(collection(db, "attendance"), orderBy("timestamp", "desc"), limit(100))
+      : query(
+          collection(db, "attendance"),
+          where("studentUid", "==", currentUser.uid),
+          limit(100)
+        );
+
+    const snapshot = await getDocs(recordsQuery);
+    const records = snapshot.docs.map(item => item.data());
+
+    records.sort((a, b) =>
+      (b.timestamp?.toMillis?.() || 0) -
+      (a.timestamp?.toMillis?.() || 0)
+    );
+
+    const now = new Date();
+    const todayKey = now.getFullYear() + "-" +
+      String(now.getMonth() + 1).padStart(2, "0") + "-" +
+      String(now.getDate()).padStart(2, "0");
+
+    $("totalRecords").textContent = records.length;
+
+    $("presentToday").textContent = currentProfile.role === "admin"
+      ? records.filter(r => r.dateKey === todayKey).length
+      : (records.some(r => r.dateKey === todayKey) ? "Yes" : "No");
+
+    $("attendanceRate").textContent =
+      currentProfile.role === "admin" ? "—" : (records.length ? "Demo" : "—");
+
+    body.replaceChildren();
+
+    if (!records.length) {
+      body.innerHTML = "<tr><td colspan='5'>No attendance records yet.</td></tr>";
+      return;
+    }
+
+    records.forEach(record => {
+      const row = document.createElement("tr");
+      const time = record.timestamp?.toDate
+        ? record.timestamp.toDate().toLocaleString()
+        : "Saving time...";
+
+      [
+        record.studentName || "Student",
+        record.rollNo || "—",
+        time,
+        record.status || "Present",
+        record.method || "RFID"
+      ].forEach((value, index) => {
+        const cell = document.createElement("td");
+        cell.textContent = String(value);
+        if (index === 3) cell.style.color = "#16865a";
+        row.appendChild(cell);
+      });
+
+      body.appendChild(row);
+    });
+
+    showMessage("dashboardMessage", "");
+  } catch (error) {
+    body.innerHTML =
+      "<tr><td colspan='5'>Could not load records. Check Firestore Rules.</td></tr>";
+    showMessage("dashboardMessage", errorText(error), true);
+  }
+}
+</script>
+</body>
+</html>
+
